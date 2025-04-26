@@ -14,16 +14,23 @@ except ImportError:
             print('✅ "gTTS" installed successfully.\n')
         except Exception as install_error:
             print(f'❌ Failed to install "gTTS": {install_error}')
-            exit(1)
+            sys.exit(1)
     else:
         print('🚪 Exiting because "gTTS" is required.')
-        exit(1)
+        sys.exit(1)
 
-input_file = 'text.txt'
-output_file = 'audio.mp3'
+if len(sys.argv) < 2:
+    print('❌ Usage: python script.py <input_text_file> [output_file_name]')
+    sys.exit(1)
+
+input_file = sys.argv[1]
+output_file = sys.argv[2] if len(sys.argv) >= 3 else 'audio'
+
+if not output_file.endswith('.mp3'):
+    output_file += '.mp3'
 
 try:
-    if not os.path.exists(input_file):
+    if not os.path.isfile(input_file):
         raise FileNotFoundError(f'Input file "{input_file}" not found.')
 
     with open(input_file, 'r', encoding='utf-8') as file:
@@ -35,7 +42,7 @@ try:
     tts = gTTS(text=text, lang='hi')
     tts.save(output_file)
 
-    print('✅ Audio file has been generated successfully.')
+    print(f'✅ Audio file "{output_file}" has been generated successfully.')
 
 except FileNotFoundError as fnf_error:
     print(f'❌ Error: {fnf_error}')
